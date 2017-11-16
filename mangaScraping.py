@@ -37,4 +37,30 @@ class mangaFinder():
             handler.write(img_data)        
         #dowload the image 
     def mangafoxGetChapter(self):
+        #initiation of bs
+        sauce = request.get(self.url, verify=False)
+        soup = bs.BeautifulSoup(sauce.text, 'html.parser')
+        allResult = soup.find_all('a')
         
+        resultatChapter = [] # list of chapter
+        
+        temp = [] # list of tag whitout the chapter
+        # get tag whit chapter
+        for result in allResult:
+            testAgent = '//mangafox.me/manga/kobayashi_san_chi_no_maid_dragon/'
+            testAgent2 = 'title'
+            
+            if  testAgent in str(result) and testAgent2 in str(result):
+                pass
+            else:
+                temp.append(result)
+        # delete the tag whiout the chapter
+        for el in temp:
+            allResult.remove(el)
+        # extract the link out of the tag
+        for result in allResult:
+            start = str(result).find('href="') +6
+            end = str(result).find('" title')
+            link = 'https:'+str(result)[start:end]
+        
+                    
