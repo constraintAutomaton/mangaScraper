@@ -102,4 +102,7 @@ def testGetAllPage():
         listNumberPage.append(numberPage)
         numberPage-=1
     listNumberPage.reverse()
-testGetAllPage()
+    listUrlPage = []
+    
+        
+testGetChapter()

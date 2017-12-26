@@ -24,45 +24,71 @@ def find_nth(string,substring,nb,direction = 'f'):
     result = beg
     return result
 class mangaFinder():
-    def __int__(self,url,start,end):
+    def __init__(self,url,start,end):
         self.url = url
         self.chStart = start
         self.chEnd = end   
         self.domain = self.url[:self.url.find('.')]
         
     def domainSplitter(self):
-        if self.domain == 'https://mangafox':
-            self.mangafoxDowloadImage()
+        if self.domain == 'http://mangafox':
+            self.mangafoxDowload()
         else:
             print('not supported')
             
-    def mangafoxDowloadImage(self):
+    def mangafoxDowload(self):
+        allChapt = self.mangafoxGetChapter() # get all the chapter ask by the user
         
-        for urlCh in self.mangafoxGetChapter():
-            sauce = request.get('{}'.format(urlCh), verify=False) # to do get the link
-            soup = bs.BeautifulSoup(sauce.text, 'html.parser')
-            #  initiation of Bs object
-            end = url.find('html')-1
-            start = url.rfind('/')+1
-            fileName = url[start:end]
-            # name of the jpg file    
-            result = soup.find('img')        
-            stringResult = str(result)
-            #find the tag whit the link of the image 
-            start = stringResult.find('src=')
-            urlImage = stringResult[start:]
-            end = urlImage.find(' ')-1
-            urlImage = urlImage[5:end]
-            urlImage = urlImage.replace('amp;','')
-            # get the link of the image by delete the 'junk text' of the tag
+        for urlCh in allChapt: 
             
-            img_data = request.get(urlImage).content
-            with open('{}.jpg'.format(fileName), 'wb') as handler:
-                handler.write(img_data)        
-            #dowload the image 
+            allPage = self.mangafoxGetAllPageChapter(urlCh) # get all the page of the user
+            
+            for urlPage in allPage:
+                sauce = ''
+                while sauce == '':
+                    try:
+                        sauce = request.get(urlPage, verify=False)
+                    except:
+                        time.sleep(5)
+                        continue                
+                 
+                soup = bs.BeautifulSoup(sauce.text, 'html.parser')
+                #  initiation of Bs object
+                
+                end = url.find('html')-1
+                start = url.rfind('/')+1
+                fileName = url[start:end]
+                # name of the jpg file    
+                
+                result = soup.find('img')        
+                stringResult = str(result)
+                
+                #find the tag whit the link of the image 
+                start = stringResult.find('src=')
+                urlImage = stringResult[start:]
+                end = urlImage.find(' ')-1
+                urlImage = urlImage[5:end]
+                urlImage = urlImage.replace('amp;','')
+                # get the link of the image by delete the 'junk text' of the tag
+                
+                img_data = request.get(urlImage).content
+                with open('{}.jpg'.format(fileName), 'wb') as handler:
+                    handler.write(img_data) 
+                print('done')
+            
+                #dowload the image 
+                
     def mangafoxGetChapter(self):
         #initiation of bs
-        sauce = request.get(self.url, verify=False)
+        sauce = ''
+        while sauce == '':
+            try:
+                sauce = request.get(self.url, verify=False)
+            except:
+                time.sleep(5)
+                print(self.url)
+                continue        
+            
         soup = bs.BeautifulSoup(sauce.text, 'html.parser')
         allResult = soup.find_all('a')
         
@@ -71,7 +97,7 @@ class mangaFinder():
         temp = [] # list of tag whitout the chapter
         # get tag whit chapter
         for result in allResult:
-            testAgent = self.url # false
+            testAgent = self.url[5:] # false
             testAgent2 = 'title'
             
             if  testAgent in str(result) and testAgent2 in str(result):
@@ -93,17 +119,25 @@ class mangaFinder():
             for x in range(0, 2):
                 if numberchapt[0] == '0':
                     numberchapt = numberchapt[1:]
-            if int(numberchapt)<=self.chEnd and int(numberchapt)>=self.chStart:
+            if float(numberchapt)<=self.chEnd and float(numberchapt)>=self.chStart:
                 resultatChapter.append(link)     
         
             
         return resultatChapter
                     
-    def  mangafoxGetAllPageChapter(self):
+    def  mangafoxGetAllPageChapter(self,chapterUrl):
         #initiation of bs
-        sauce = request.get(self.url, verify=False)
+        sauce = ''
+        while sauce == '':
+            try:
+                sauce = request.get(chapterUrl, verify=False)
+            except:
+                time.sleep(5)
+                print(chapterUrl)
+                continue
         soup = bs.BeautifulSoup(sauce.text, 'html.parser')
         allResult = soup.find_all('a')
+        
         #find select tag who contains the text of the page of the chapter
         allResult = soup.find_all('select') 
         tagNumberPage = str(allResult[1])
@@ -112,8 +146,16 @@ class mangaFinder():
         end = tagNumberPage.find('"',start)
         numberPage = int(tagNumberPage[start:end])
         listNumberPage =[]
+        
         while  numberPage>0:
             listNumberPage.append(numberPage)
             numberPage-=1
         listNumberPage.reverse()
-        return listNumberPage
+        listPageUrl = []
+        
+        for page in listNumberPage:
+            end = chapterUrl.rfind('/')+1
+            urlPage = chapterUrl[0:end]+str(page)+'.html'
+            listPageUrl.append(urlPage)
+       
+        return listPageUrl
