@@ -1,9 +1,29 @@
 import sys 
 import bs4 as bs
 import requests as request
+def find_nth(string,substring,nb,direction = 'f'):
+    
+    beg = string.find(substring)
+    if direction == 'f':
+        while nb>1 and beg<len(string):
+            beg = string.find(substring,beg+1)
+            nb -= 1
+    else:
+        past = ''
+        result = [beg]
+        while True:
+            
+            beg = string.find(substring,beg+1)
+            result.append(beg)
+            if result[len(result)-1] ==-1:
+                break
+        beg = result[len(result)-nb-1]
+    result = beg
+    return result
+        
 def testDowload():
 
-    url  ='https://mangafox.me/manga/kobayashi_san_chi_no_maid_dragon/v06/c057/1.html'
+    url  ='http://mangafox.la/manga/kobayashi_san_chi_no_maid_dragon/v01/c001/1.html'
     sauce = request.get(url, verify=False)
     soup = bs.BeautifulSoup(sauce.text, 'html.parser')
     
@@ -28,14 +48,15 @@ def testDowload():
     with open('{}.jpg'.format(fileName), 'wb') as handler:
         handler.write(img_data)
 def testGetChapter():
-    url  ='https://mangafox.me/manga/kobayashi_san_chi_no_maid_dragon/'
+    
+    url  ='http://mangafox.la/manga/kobayashi_san_chi_no_maid_dragon/'
     sauce = request.get(url, verify=False)
     soup = bs.BeautifulSoup(sauce.text, 'html.parser')
     allResult = soup.find_all('a')
     resultatChapter = []
     temp = []
     for result in allResult:
-        testAgent = '//mangafox.me/manga/kobayashi_san_chi_no_maid_dragon/'
+        testAgent = '//mangafox.la/manga/kobayashi_san_chi_no_maid_dragon/'
         testAgent2 = 'title'
         
         if  testAgent in str(result) and testAgent2 in str(result):
@@ -45,15 +66,40 @@ def testGetChapter():
     
     for el in temp:
         allResult.remove(el)
-        
+    inf= 25
+    sup = 40       
     for result in allResult:
         start = str(result).find('href="') +6
         end = str(result).find('" title')
         link = 'https:'+str(result)[start:end]
-        resultatChapter.append(link)
+        
+        start = link.rfind('c')+1
+        end = link.rfind('/')
+        numberchapt = link[start:end]
+        for x in range(0, 2):
+            if numberchapt[0] == '0':
+                numberchapt = numberchapt[1:]
+        if int(numberchapt)<=sup and int(numberchapt)>=inf:
+            resultatChapter.append(link)     
+        
+        
         
     print(resultatChapter)
-
-   
-testGetChapter()
-#testDowload()
+ 
+def testGetAllPage():
+    url  ='http://mangafox.la/manga/kobayashi_san_chi_no_maid_dragon/c001/1.html'
+    sauce = request.get(url, verify=False)
+    soup = bs.BeautifulSoup(sauce.text, 'html.parser')
+    
+    allResult = soup.find_all('select') 
+    tagNumberPage = str(allResult[1])
+    
+    start = find_nth(tagNumberPage,'value="',2,'r')+7
+    end = tagNumberPage.find('"',start)
+    numberPage = int(tagNumberPage[start:end])
+    listNumberPage =[]
+    while  numberPage>0:
+        listNumberPage.append(numberPage)
+        numberPage-=1
+    listNumberPage.reverse()
+testGetAllPage()
