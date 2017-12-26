@@ -40,7 +40,7 @@ class mangaFinder():
         allChapt = self.mangafoxGetChapter() # get all the chapter ask by the user
         
         for urlCh in allChapt: 
-            
+            print(1)
             allPage = self.mangafoxGetAllPageChapter(urlCh) # get all the page of the user
             
             for urlPage in allPage:
@@ -55,9 +55,9 @@ class mangaFinder():
                 soup = bs.BeautifulSoup(sauce.text, 'html.parser')
                 #  initiation of Bs object
                 
-                end = url.find('html')-1
-                start = url.rfind('/')+1
-                fileName = url[start:end]
+                end = urlPage.find('html')-1
+                start = urlPage.rfind('/')+1
+                fileName = urlPage[start:end]
                 # name of the jpg file    
                 
                 result = soup.find('img')        
@@ -86,7 +86,7 @@ class mangaFinder():
                 sauce = request.get(self.url, verify=False)
             except:
                 time.sleep(5)
-                print(self.url)
+                
                 continue        
             
         soup = bs.BeautifulSoup(sauce.text, 'html.parser')
@@ -111,7 +111,7 @@ class mangaFinder():
         for result in allResult:
             start = str(result).find('href="') +6
             end = str(result).find('" title')
-            link = 'https:'+str(result)[start:end]
+            link = 'http:'+str(result)[start:end]
             # get the chapter input
             start = link.rfind('c')+1
             end = link.rfind('/')
@@ -133,7 +133,7 @@ class mangaFinder():
                 sauce = request.get(chapterUrl, verify=False)
             except:
                 time.sleep(5)
-                print(chapterUrl)
+                print('page')
                 continue
         soup = bs.BeautifulSoup(sauce.text, 'html.parser')
         allResult = soup.find_all('a')

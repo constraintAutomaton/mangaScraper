@@ -71,7 +71,7 @@ def testGetChapter():
     for result in allResult:
         start = str(result).find('href="') +6
         end = str(result).find('" title')
-        link = 'https:'+str(result)[start:end]
+        link = 'http:'+str(result)[start:end]
         
         start = link.rfind('c')+1
         end = link.rfind('/')
