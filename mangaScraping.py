@@ -81,6 +81,7 @@ class mangaFinder():
                 img_data = request.get(urlImage).content
                 with open('{}.jpg'.format(fileName), 'wb') as handler:
                     handler.write(img_data) 
+                    
                 try: # delete the file if it already exist
                     self.manageImage(fileName,folder)
                 except:
@@ -179,7 +180,7 @@ class mangaFinder():
             if caracter=='_' or caracter=='/' :
     
                 name = name.replace(caracter,' ')
-        name = name.replace('1.html','')
+        name = name.replace(' 1.html','')
         return name
         
     def manageImage(self,image,folder):
