@@ -2,6 +2,7 @@ import sys
 import bs4 as bs
 import requests as request
 import time
+import os
 
 def find_nth(string,substring,nb,direction = 'f'):
     
@@ -24,11 +25,12 @@ def find_nth(string,substring,nb,direction = 'f'):
     result = beg
     return result
 class mangaFinder():
-    def __init__(self,url,start,end):
+    def __init__(self,url,start,end,folder):
         self.url = url
         self.chStart = start
         self.chEnd = end   
         self.domain = self.url[:self.url.find('.')]
+        self.folder = folder
         
     def domainSplitter(self):
         if self.domain == 'http://mangafox':
@@ -40,7 +42,12 @@ class mangaFinder():
         allChapt = self.mangafoxGetChapter() # get all the chapter ask by the user
         
         for urlCh in allChapt: 
-            print(1)
+            try:
+                folder = self.mangafoxNameFolder(urlCh)
+                os.makedirs(r'{}\{}'.format(self.folder,folder))
+            except:
+                pass
+            
             allPage = self.mangafoxGetAllPageChapter(urlCh) # get all the page of the user
             
             for urlPage in allPage:
@@ -74,8 +81,11 @@ class mangaFinder():
                 img_data = request.get(urlImage).content
                 with open('{}.jpg'.format(fileName), 'wb') as handler:
                     handler.write(img_data) 
-                print('done')
-            
+                try: # delete the file if it already exist
+                    self.manageImage(fileName,folder)
+                except:
+                    os.remove('{}.jpg'.format(fileName))
+                    
                 #dowload the image 
                 
     def mangafoxGetChapter(self):
@@ -122,10 +132,10 @@ class mangaFinder():
             if float(numberchapt)<=self.chEnd and float(numberchapt)>=self.chStart:
                 resultatChapter.append(link)     
         
-            
+        resultatChapter.reverse()
         return resultatChapter
-                    
-    def  mangafoxGetAllPageChapter(self,chapterUrl):
+    def mangafoxGetAllPageChapter(self,chapterUrl):
+        
         #initiation of bs
         sauce = ''
         while sauce == '':
@@ -159,3 +169,19 @@ class mangaFinder():
             listPageUrl.append(urlPage)
        
         return listPageUrl
+    def mangafoxNameFolder(self,urlCh):
+        start = find_nth(urlCh,'/',4,'r')+1
+        name = urlCh[start:]
+        loopName = name # can't loop and modify
+        
+        for caracter in loopName:
+            
+            if caracter=='_' or caracter=='/' :
+    
+                name = name.replace(caracter,' ')
+        name = name.replace('1.html','')
+        return name
+        
+    def manageImage(self,image,folder):
+        os.rename(r'{}.jpg'.format(image), r"{}\{}\{}.jpg".format(self.folder,folder,image))
+        

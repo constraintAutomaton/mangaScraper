@@ -1,6 +1,8 @@
 import sys 
 import bs4 as bs
 import requests as request
+import os
+
 def find_nth(string,substring,nb,direction = 'f'):
     
     beg = string.find(substring)
@@ -87,6 +89,7 @@ def testGetChapter():
     print(resultatChapter)
  
 def testGetAllPage():
+
     url  ='http://mangafox.la/manga/kobayashi_san_chi_no_maid_dragon/c001/1.html'
     sauce = request.get(url, verify=False)
     soup = bs.BeautifulSoup(sauce.text, 'html.parser')
@@ -104,5 +107,4 @@ def testGetAllPage():
     listNumberPage.reverse()
     listUrlPage = []
     
-        
-testGetChapter()
+testDowload()
