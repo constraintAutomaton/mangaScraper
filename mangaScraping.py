@@ -4,35 +4,20 @@ import requests as request
 import time
 import os
 
-def find_nth(string,substring,nb,direction = 'f'):
-    
-    
-    beg = string.find(substring)
-    if direction == 'f':
-        while nb>1 and beg<len(string):
-            beg = string.find(substring,beg+1)
-            nb -= 1
-    else:
-        past = ''
-        result = [beg]
-        while True:
-            
-            beg = string.find(substring,beg+1)
-            result.append(beg)
-            if result[len(result)-1] ==-1:
-                break
-        beg = result[len(result)-nb-1]
-    result = beg
-    return result
+
 class mangaFinder():
-    def __init__(self,url,start,end,folder):
+    def __init__(self,url='',start=0,end=0,folder=''):
         self.url = url
         self.chStart = start
         self.chEnd = end   
         self.domain = self.url[:self.url.find('.')]
         self.folder = folder
+        self.totalPage = 0
+        self.pageDownloaded = 0
+        
         
     def domainSplitter(self):
+        
         if self.domain == 'http://mangafox':
             self.mangafoxDowload()
         else:
@@ -40,6 +25,7 @@ class mangaFinder():
             
     def mangafoxDowload(self):
         allChapt = self.mangafoxGetChapter() # get all the chapter ask by the user
+        self.mangafoxGetTotalPage(allChapt)
         
         for urlCh in allChapt: 
             try:
@@ -86,8 +72,11 @@ class mangaFinder():
                     self.manageImage(fileName,folder)
                 except:
                     os.remove('{}.jpg'.format(fileName))
-                    
+                self.pageDownloaded += 1
                 #dowload the image 
+           
+            self.totalPage = 0
+            self.pageDownloaded = 0
                 
     def mangafoxGetChapter(self):
         #initiation of bs
@@ -182,7 +171,39 @@ class mangaFinder():
                 name = name.replace(caracter,' ')
         name = name.replace(' 1.html','')
         return name
+    def mangafoxGetTotalPage(self,allChapter):
+         # get the nomber of the dowloading session for the progress bar
+        for chapter in allChapter:
+            self.totalPage += len(self.mangafoxGetAllPageChapter(chapter))
         
     def manageImage(self,image,folder):
-        os.rename(r'{}.jpg'.format(image), r"{}\{}\{}.jpg".format(self.folder,folder,image))
         
+        os.rename(r'{}.jpg'.format(image), r"{}\{}\{}.jpg".format(self.folder,folder,image))
+    def setVariable(self,url,start,end,folder):
+        
+        self.url = url
+        self.chStart = start
+        self.chEnd = end   
+        self.domain = self.url[:self.url.find('.')]
+        self.folder = folder  
+        
+def find_nth(string,substring,nb,direction = 'f'):
+    
+    
+    beg = string.find(substring)
+    if direction == 'f':
+        while nb>1 and beg<len(string):
+            beg = string.find(substring,beg+1)
+            nb -= 1
+    else:
+        past = ''
+        result = [beg]
+        while True:
+            
+            beg = string.find(substring,beg+1)
+            result.append(beg)
+            if result[len(result)-1] ==-1:
+                break
+        beg = result[len(result)-nb-1]
+    result = beg
+    return result
