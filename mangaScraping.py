@@ -13,8 +13,7 @@ class mangaFinder():
         self.domain = self.url[:self.url.find('.')]
         self.folder = folder
         self.totalPage = 0
-        self.pageDownloaded = 0
-        
+        self.pageDownloaded = 0  
         
     def domainSplitter(self):
         
@@ -172,9 +171,16 @@ class mangaFinder():
         name = name.replace(' 1.html','')
         return name
     def mangafoxGetTotalPage(self,allChapter):
-         # get the nomber of the dowloading session for the progress bar
+        
+         # get the number of page of all the chapter the user want to download
         for chapter in allChapter:
             self.totalPage += len(self.mangafoxGetAllPageChapter(chapter))
+    def mangafoxGetTitle(self,url):
+        start = find_nth(url,'/',4)+1
+        end = len(url)
+        Title = url[start:end-1]
+        return Title
+        
         
     def manageImage(self,image,folder):
         
@@ -185,10 +191,12 @@ class mangaFinder():
         self.chStart = start
         self.chEnd = end   
         self.domain = self.url[:self.url.find('.')]
-        self.folder = folder  
+        self.folder = folder
+    
+        
         
 def find_nth(string,substring,nb,direction = 'f'):
-    
+    # find the position of the nth occurence of a substring 
     
     beg = string.find(substring)
     if direction == 'f':

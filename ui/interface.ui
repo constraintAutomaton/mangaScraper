@@ -93,6 +93,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="btnAddQueue">
+           <property name="text">
+            <string>Add to list download</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -104,6 +111,29 @@
        <number>0</number>
       </property>
      </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="lblProgressBarResult">
+      <property name="text">
+       <string>0</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="lblQueueDownload">
+      <property name="text">
+       <string>list download</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="tbQueueDownload"/>
     </item>
    </layout>
   </widget>
