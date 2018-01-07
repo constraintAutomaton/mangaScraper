@@ -15,26 +15,51 @@ class interface(Ui_MainWindow):
         self.task = None # the thread of the download
         self.progress = None # the thread of thr progress bar
         
+        
+        with open('lastUsed.txt','r') as file:
+            lastUsed = file.readlines()     
+        
+        self.leFolder.setText(lastUsed[0][0:-1])
+        self.leUrl.setText(lastUsed[1][0:-1])
+        self.leStart.setText(lastUsed[2][0:-1])
+        self.leEnd.setText(lastUsed[3])
+            
+        
         self.btnGo.clicked.connect(self.threadDownload)
         self.btnAddQueue.clicked.connect(self.addToQueue)
         
     def addToQueue(self):
-        tupleInfoDownload = (self.leUrl.text(),float(self.leStart.text()),float(self.leEnd.text()),self.leFolder.text()) # data to download the chapter
-        self.downloadQueue.put(tupleInfoDownload) 
-        self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText()+ ' {} from chapter {} to chapter {} to {}\n'.format(self.mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]), 
-                                                                                                                            tupleInfoDownload[1],tupleInfoDownload[2],tupleInfoDownload[3])) 
+        
+        if self.leUrl.text() == '' or self.leStart.text() == '' or self.leEnd.text() == '' or self.leFolder.text() =='':
+            pass
+
+        else:
+            
+            tupleInfoDownload = (self.leUrl.text(),float(self.leStart.text()),float(self.leEnd.text()),self.leFolder.text()) # data to download the chapter
+            self.downloadQueue.put(tupleInfoDownload) 
+            print(tupleInfoDownload,self.mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]))
+            self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText()+ ' {} from chapter {} to chapter {} to {}\n'.format(self.mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]), 
+                                                                                                                                tupleInfoDownload[1],tupleInfoDownload[2],tupleInfoDownload[3])) 
+            
         # write on the label the queue
     def download(self):
         
-        while not self.downloadQueue.empty():
+        #self.addToQueue()
+        while not self.downloadQueue.empty(): # start to download everything that is in the queue
             infoDownload = self.downloadQueue.get()
             self.mangaScraper.setVariable(infoDownload[0],infoDownload[1],infoDownload[2],infoDownload[3])
             self.mangaScraper.domainSplitter()
+            
+        self.btnAddQueue.setEnabled(True)
+        self.btnGo.setEnabled(True)        
                 
     
         
     def threadDownload(self,queue):
-    
+        
+        self.btnAddQueue.setEnabled(False)
+        self.btnGo.setEnabled(False)
+        
         self.task = threading.Thread(target = self.download)
         self.task.start()
         

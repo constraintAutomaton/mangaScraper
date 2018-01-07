@@ -6,7 +6,7 @@ import os
 
 
 class mangaFinder():
-    def __init__(self,url='',start=0,end=0,folder=''):
+    def __init__(self,url='',start=0.0,end=0.0,folder=os.getcwd()):
         try:
             self.url = url
             self.chStart = start
