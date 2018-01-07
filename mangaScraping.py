@@ -7,20 +7,50 @@ import os
 
 class mangaFinder():
     def __init__(self,url='',start=0,end=0,folder=''):
-        self.url = url
-        self.chStart = start
-        self.chEnd = end   
-        self.domain = self.url[:self.url.find('.')]
-        self.folder = folder
-        self.totalPage = 0
-        self.pageDownloaded = 0  
+        try:
+            self.url = url
+            self.chStart = start
+            self.chEnd = end   
+            self.domain = self.url[:self.url.find('.')]
+            self.folder = folder
+            self.totalPage = 0
+            self.pageDownloaded = 0  
+            
+            # Error handling
+            
+            if not(isinstance(self.url,str)):
+                raise TypeError('The url have to be a string')
+            
+            elif not(isinstance(self.chEnd,float)) and not(isinstance(self.chStart,float)):
+                
+                raise TypeError('The start and ending chapter have to be number')
+            
+            elif not(os.path.isdir(r'{}'.format(folder))):
+                raise ValueError("The directory don't exist")
+                               
+            
+            elif self.chStart>self.chEnd:
+                
+                raise ValueError('The ending chapter have to be after the start chapter')
         
+        except TypeError as error: # maybe find a way to catch the error in one line
+    
+            print(repr(error))
+            
+        except ValueError as error:
+            
+            print(repr(error))
+            
     def domainSplitter(self):
+        try:
+            if self.domain == 'http://mangafox':
+                self.mangafoxDowload()
+            else:
+                raise ValueError('Url not valid for the momment we only support manga ')
+        except ValueError as error:
+            
+            print(repr(error))
         
-        if self.domain == 'http://mangafox':
-            self.mangafoxDowload()
-        else:
-            print('not supported')
             
     def mangafoxDowload(self):
         allChapt = self.mangafoxGetChapter() # get all the chapter ask by the user
@@ -139,6 +169,7 @@ class mangaFinder():
         
         #find select tag who contains the text of the page of the chapter
         allResult = soup.find_all('select') 
+        
         tagNumberPage = str(allResult[1])
         
         start = find_nth(tagNumberPage,'value="',2,'r')+7
@@ -187,11 +218,7 @@ class mangaFinder():
         os.rename(r'{}.jpg'.format(image), r"{}\{}\{}.jpg".format(self.folder,folder,image))
     def setVariable(self,url,start,end,folder):
         
-        self.url = url
-        self.chStart = start
-        self.chEnd = end   
-        self.domain = self.url[:self.url.find('.')]
-        self.folder = folder
+        self.__init__(url,start,end,folder)
     
         
         
