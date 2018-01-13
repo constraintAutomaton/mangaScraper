@@ -7,14 +7,58 @@ from interface import Ui_MainWindow
 import threading
 import queue
 
+global  downloadQueue
+global mangaScraper
+global flagDownloadFinish
+
+mangaScraper = mangaFinder()
+downloadQueue = queue.Queue() # a queue to limit one download at the time 
+flagDownloadFinish = False
+
+class downloadingThread(QtCore.QThread):
+    
+    
+    def __init__(self):
+        
+        QtCore.QThread.__init__(self)
+        
+    def run(self):
+        
+        while not downloadQueue.empty(): # start to download everything that is in the queue
+            
+            infoDownload = downloadQueue.get()
+            mangaScraper.setVariable(infoDownload[0],infoDownload[1],infoDownload[2],infoDownload[3])
+            mangaScraper.domainSplitter()
+            flagDownloadFinish = True
+            
+class progressBarThread(QtCore.QThread):
+    taskProgressBar = QtCore.pyqtSignal(tuple)
+    def __init__(self):
+        QtCore.QThread.__init__(self)
+        self.completed = 0
+        self.pageDowloaded = 0
+    def run(self):
+        
+        while not flagDownloadFinish:
+            try:
+                
+                self.completed = (mangaScraper.pageDownloaded/mangaScraper.totalPage)*100
+                self.pageDowloaded = mangaScraper.pageDownloaded
+            except:
+                self.completed = 0
+                
+            completed_dowloaded = (self.completed, self.pageDowloaded)
+            self.taskProgressBar.emit(completed_dowloaded)
+            
+            
+
+        
 class interface(Ui_MainWindow):
+    
     def __init__(self, w):
         self.setupUi(w)
-        self.mangaScraper = mangaFinder()
-        self.downloadQueue = queue.Queue() # a queue to limit one download at the time
-        self.task = None # the thread of the download
-        self.progress = None # the thread of thr progress bar
-        
+        self.downloadingThread = None
+        self.progressBarThread = None
         
         with open('lastUsed.txt','r') as file:
             lastUsed = file.readlines()     
@@ -25,8 +69,9 @@ class interface(Ui_MainWindow):
         self.leEnd.setText(lastUsed[3])
             
         
-        self.btnGo.clicked.connect(self.threadDownload)
+        self.btnGo.clicked.connect(self.btnDownload)
         self.btnAddQueue.clicked.connect(self.addToQueue)
+        
         
     def addToQueue(self):
         
@@ -36,50 +81,39 @@ class interface(Ui_MainWindow):
         else:
             
             tupleInfoDownload = (self.leUrl.text(),float(self.leStart.text()),float(self.leEnd.text()),self.leFolder.text()) # data to download the chapter
-            self.downloadQueue.put(tupleInfoDownload) 
-            print(tupleInfoDownload,self.mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]))
-            self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText()+ ' {} from chapter {} to chapter {} to {}\n'.format(self.mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]), 
+            downloadQueue.put(tupleInfoDownload) 
+            
+            self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText()+ ' {} from chapter {} to chapter {} to {}\n'.format(mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]), 
                                                                                                                                 tupleInfoDownload[1],tupleInfoDownload[2],tupleInfoDownload[3])) 
             
         # write on the label the queue
-    def download(self):
+    def btnDownload(self):
         
-        #self.addToQueue()
-        while not self.downloadQueue.empty(): # start to download everything that is in the queue
-            infoDownload = self.downloadQueue.get()
-            self.mangaScraper.setVariable(infoDownload[0],infoDownload[1],infoDownload[2],infoDownload[3])
-            self.mangaScraper.domainSplitter()
-            
-        self.btnAddQueue.setEnabled(True)
-        self.btnGo.setEnabled(True)        
-                
-    
+        self.addToQueue()
         
-    def threadDownload(self,queue):
+        self.progressBarThread = progressBarThread()
+        self.progressBarThread.start()
+        
+        self.downloadingThread = downloadingThread()
+        self.downloadingThread.start()
+        
+        
+        
+        self.progressBarThread.taskProgressBar.connect(self.taskProgressBar)
         
         self.btnAddQueue.setEnabled(False)
-        self.btnGo.setEnabled(False)
-        
-        self.task = threading.Thread(target = self.download)
-        self.task.start()
-        
-        self.progress = threading.Thread(target = self.taskProgressBar)
-        self.progress.start()
-        
-    def taskProgressBar(self):
-        while self.task.isAlive():
-            try: # at the begining completed = 0/0
-                completed = (self.mangaScraper.pageDownloaded/self.mangaScraper.totalPage)*100
-            except:
+        self.btnGo.setEnabled(False)        
                 
-                completed = 0
-                
-            self.lblProgressBarResult.setText('{} downloaded out of {}'.format(self.mangaScraper.pageDownloaded,
-                                                                               self.mangaScraper.totalPage))
-            self.progressBar.setValue(completed)
+        
+    def taskProgressBar(self,completed_dowloaded):
+        try:
+            self.lblProgressBarResult.setText('{} downloaded out of {}'.format(completed_dowloaded[1],
+                                                                               mangaScraper.totalPage))
+        except:
+            self.lblProgressBarResult.setText('0 downloaded out of 0')
+        self.progressBar.setValue(completed_dowloaded[0])
            
-        self.progressBar.setValue(100)
-        self.lblProgressBarResult.setText('all done')
+        
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

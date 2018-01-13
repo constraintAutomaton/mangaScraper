@@ -3,6 +3,7 @@ import bs4 as bs
 import requests as request
 import time
 import os
+from contextlib import contextmanager
 
 
 class mangaFinder():
@@ -41,19 +42,25 @@ class mangaFinder():
             
             print(repr(error))
             
+    
     def domainSplitter(self):
         try:
             if self.domain == 'http://mangafox':
                 self.mangafoxDowload()
             else:
-                raise ValueError('Url not valid for the momment we only support manga ')
+                raise ValueError('Url not valid for the moment we only support manga ')
         except ValueError as error:
             
             print(repr(error))
         
             
+   
     def mangafoxDowload(self):
-        allChapt = self.mangafoxGetChapter() # get all the chapter ask by the user
+        
+        self.totalPage = 0
+        self.pageDownloaded = 0
+        
+        allChapt = self.mangafoxGetChapter() # get all the chapters ask by the user
         self.mangafoxGetTotalPage(allChapt)
         
         for urlCh in allChapt: 
@@ -102,10 +109,10 @@ class mangaFinder():
                 except:
                     os.remove('{}.jpg'.format(fileName))
                 self.pageDownloaded += 1
+               
                 #dowload the image 
            
-            self.totalPage = 0
-            self.pageDownloaded = 0
+            
                 
     def mangafoxGetChapter(self):
         #initiation of bs
@@ -203,7 +210,7 @@ class mangaFinder():
         return name
     def mangafoxGetTotalPage(self,allChapter):
         
-         # get the number of page of all the chapter the user want to download
+         # get the number of pages of all the chapter the user wants to download
         for chapter in allChapter:
             self.totalPage += len(self.mangafoxGetAllPageChapter(chapter))
     def mangafoxGetTitle(self,url):
@@ -217,11 +224,9 @@ class mangaFinder():
         
         os.rename(r'{}.jpg'.format(image), r"{}\{}\{}.jpg".format(self.folder,folder,image))
     def setVariable(self,url,start,end,folder):
-        
         self.__init__(url,start,end,folder)
+
     
-        
-        
 def find_nth(string,substring,nb,direction = 'f'):
     # find the position of the nth occurence of a substring 
     
