@@ -42,20 +42,17 @@ class mangaFinder():
             print(repr(error))
             
     
-    def domainSplitter(self):
+        
+            
+    def mangafoxDowload(self):
         try:
             if self.domain == 'http://mangafox':
                 pass
             else:
-                raise ValueError('Url not valid for the moment we only support manga ')
+                raise ValueError('Url not valid for the moment we only support manga fox ')
         except ValueError as error:
             
             print(repr(error))
-        
-            
-   
-    def mangafoxDowload(self):
-        self. domainSplitter()
         
         self.totalPage = 0
         self.pageDownloaded = 0
