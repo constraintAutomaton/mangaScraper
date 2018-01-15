@@ -97,14 +97,14 @@ class mangaFinder():
                 urlImage = urlImage.replace('amp;','')
                 # get the link of the image by delete the 'junk text' of the tag
                 
-                img_data = request.get(urlImage).content
-                with open('{}.jpg'.format(fileName), 'wb') as handler:
-                    handler.write(img_data) 
-                    
-                try: # delete the file if it already exist
+                if not(os.path.isfile(r"{}\{}\{}.jpg".format(self.folder,folder,fileName))):
+                    img_data = request.get(urlImage).content
+                    with open('{}.jpg'.format(fileName), 'wb') as handler:
+                        handler.write(img_data) 
                     self.manageImage(fileName,folder)
-                except:
-                    os.remove('{}.jpg'.format(fileName))
+                else:
+                    pass
+                
                 self.pageDownloaded += 1
                 yield self.pageDownloaded
                

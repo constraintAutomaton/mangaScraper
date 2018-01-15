@@ -98,8 +98,7 @@ class interface(Ui_MainWindow):
         
     def newOperation(self):
         self.btnAddQueue.setEnabled(True)
-        self.btnGo.setEnabled(True)  
-           
+        self.btnGo.setEnabled(True)
         
 
 def main():
