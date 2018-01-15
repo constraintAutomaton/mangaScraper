@@ -3,7 +3,6 @@ import bs4 as bs
 import requests as request
 import time
 import os
-from contextlib import contextmanager
 
 
 class mangaFinder():
@@ -46,7 +45,7 @@ class mangaFinder():
     def domainSplitter(self):
         try:
             if self.domain == 'http://mangafox':
-                self.mangafoxDowload()
+                pass
             else:
                 raise ValueError('Url not valid for the moment we only support manga ')
         except ValueError as error:
@@ -56,6 +55,7 @@ class mangaFinder():
             
    
     def mangafoxDowload(self):
+        self. domainSplitter()
         
         self.totalPage = 0
         self.pageDownloaded = 0
@@ -109,6 +109,7 @@ class mangaFinder():
                 except:
                     os.remove('{}.jpg'.format(fileName))
                 self.pageDownloaded += 1
+                yield self.pageDownloaded
                
                 #dowload the image 
            
