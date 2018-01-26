@@ -1,5 +1,0 @@
-setup.py
-mangaScraper.egg-info/PKG-INFO
-mangaScraper.egg-info/SOURCES.txt
-mangaScraper.egg-info/dependency_links.txt
-mangaScraper.egg-info/top_level.txt

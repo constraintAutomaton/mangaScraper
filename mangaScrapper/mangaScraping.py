@@ -234,21 +234,29 @@ class mangaFinder():
 
 def find_nth(string, substring, nb, direction='f'):
     # find the position of the nth occurence of a substring
-
+    if nb<1 or nb>len(string):
+        raise TypeError('must be positive')
     beg = string.find(substring)
+    if beg == -1: 
+        raise ValueError('substring not in string')
+    past = None
     if direction == 'f':
         while nb > 1 and beg < len(string):
             beg = string.find(substring, beg + 1)
+            if beg==past:
+                raise ValueError('the string countain less iteration of the substring')
             nb -= 1
+            past = beg
     else:
-        past = ''
         result = [beg]
         while True:
-
             beg = string.find(substring, beg + 1)
+            if beg==past:
+                raise ValueError('the string countain less iteration of the substring')
             result.append(beg)
             if result[len(result) - 1] == -1:
                 break
+            past = beg
         beg = result[len(result) - nb - 1]
     result = beg
     return result
