@@ -70,6 +70,9 @@ class Ui_MainWindow(object):
         self.btnAddQueue.setObjectName("btnAddQueue")
         self.horizontalLayout_2.addWidget(self.btnAddQueue)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
+        self.btnStopDownload = QtWidgets.QPushButton(self.widget_3)
+        self.btnStopDownload.setObjectName("btnStopDownload")
+        self.verticalLayout_4.addWidget(self.btnStopDownload)
         self.verticalLayout_2.addWidget(self.widget_3)
         self.progressBar = QtWidgets.QProgressBar(self.Main)
         self.progressBar.setProperty("value", 0)
@@ -107,6 +110,7 @@ class Ui_MainWindow(object):
         self.lblFolder.setText(_translate("MainWindow", "folder"))
         self.btnGo.setText(_translate("MainWindow", "GO!"))
         self.btnAddQueue.setText(_translate("MainWindow", "Add to list download"))
+        self.btnStopDownload.setText(_translate("MainWindow", "Stop Download"))
         self.lblProgressBarResult.setText(_translate("MainWindow", "0"))
         self.lblQueueDownload.setText(_translate("MainWindow", "list download"))
 

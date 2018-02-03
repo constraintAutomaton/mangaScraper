@@ -102,6 +102,13 @@
          </item>
         </layout>
        </item>
+       <item>
+        <widget class="QPushButton" name="btnStopDownload">
+         <property name="text">
+          <string>Stop Download</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

@@ -15,6 +15,7 @@ class mangaFinder():
             self.folder = folder
             self.totalPage = 0
             self.pageDownloaded = 0
+            
 
             # Error handling
 
@@ -43,9 +44,9 @@ class mangaFinder():
 
             print(repr(error))
 
-    def mangafoxDowload(self):
+    def mangafoxDownload(self):
         try:
-            if self.domain == 'http://mangafox':
+            if self.domain == 'http://fanfox':
                 pass
             else:
                 raise ValueError(
@@ -228,14 +229,18 @@ class mangaFinder():
         os.rename(r'{}.jpg'.format(image), r"{}\{}\{}.jpg".format(
             self.folder, folder, image))
 
-    def setVariable(self, url, start, end, folder):
+    def set_variable(self, url, start, end, folder):
         self.__init__(url, start, end, folder)
+    def restart(self):
+        self.__init__()
 
 
 def find_nth(string, substring, nb, direction='f'):
     # find the position of the nth occurence of a substring
-    if nb<1 or nb>len(string):
-        raise TypeError('must be positive')
+    if nb<1 :
+        raise TypeError('number of iteration must be positive')
+    elif nb>len(string):
+        raise ValueError('the number of iteration must be lesser than the number of caracter')
     beg = string.find(substring)
     if beg == -1: 
         raise ValueError('substring not in string')
@@ -244,7 +249,8 @@ def find_nth(string, substring, nb, direction='f'):
         while nb > 1 and beg < len(string):
             beg = string.find(substring, beg + 1)
             if beg==past:
-                raise ValueError('the string countain less iteration of the substring')
+                raise ValueError('the string countain less iteration of the substring. There \
+                is {} iteration'.format(nb))
             nb -= 1
             past = beg
     else:
@@ -252,7 +258,8 @@ def find_nth(string, substring, nb, direction='f'):
         while True:
             beg = string.find(substring, beg + 1)
             if beg==past:
-                raise ValueError('the string countain less iteration of the substring')
+                raise ValueError('the string countain less iteration of the substring. There \
+                is {} iteration'.format(len(result)))
             result.append(beg)
             if result[len(result) - 1] == -1:
                 break

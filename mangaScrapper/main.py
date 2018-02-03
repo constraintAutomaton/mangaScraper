@@ -9,41 +9,48 @@ import queue
 
 global downloadQueue
 global mangaScraper
+global booleanStopDownload
 
+booleanStopDownload = False
 mangaScraper = mangaFinder()
 downloadQueue = queue.Queue()  # a queue to limit one download at the time
 
 
 class downloadingThread(QtCore.QThread):
-    newOperation = QtCore.pyqtSignal()
+    new_operation = QtCore.pyqtSignal()
     taskProgressBar = QtCore.pyqtSignal(tuple)
 
     def __init__(self):
 
         QtCore.QThread.__init__(self)
-        self.completed = 0
-        self.pageDowloaded = 0
+        self.percentageCompleted = 0
+        self.pageDownloaded = 0
 
     def run(self):
 
         while not downloadQueue.empty():  # start to download everything that is in the queue
-
+            if booleanStopDownload == True:
+                break
             infoDownload = downloadQueue.get()
-            mangaScraper.setVariable(
+            mangaScraper.set_variable(
                 infoDownload[0], infoDownload[1], infoDownload[2], infoDownload[3])
 
-            for pageDowloaded in mangaScraper.mangafoxDowload():
+            for pageDownloaded in mangaScraper.mangafoxDownload():
+                if booleanStopDownload == True:
+                    break                
                 try:
 
-                    self.completed = (
-                        mangaScraper.pageDownloaded / mangaScraper.totalPage) * 100
-                    self.pageDowloaded = mangaScraper.pageDownloaded
+                    self.percentageCompleted = (
+                        pageDownloaded / mangaScraper.totalPage) * 100
+                    self.pageDownloaded = pageDownloaded
                 except:
-                    self.completed = 0
+                    self.percentageCompleted = 0
 
-                completed_dowloaded = (self.completed, self.pageDowloaded)
+                completed_dowloaded = (self.percentageCompleted, self.pageDownloaded)
                 self.taskProgressBar.emit(completed_dowloaded)
-        self.newOperation.emit()
+        self.new_operation.emit()
+    def stop(self):
+        self.terminate()    
 
 
 class interface(Ui_MainWindow):
@@ -62,7 +69,8 @@ class interface(Ui_MainWindow):
 
         self.btnGo.clicked.connect(self.btnDownload)
         self.btnAddQueue.clicked.connect(self.addToQueue)
-
+        self.btnStopDownload.clicked.connect(self.stop_download)
+        self.btnStopDownload.setEnabled(False)
     def addToQueue(self):
 
         if self.leUrl.text() == '' or self.leStart.text() == '' or self.leEnd.text() == '' or self.leFolder.text() == '':
@@ -79,17 +87,20 @@ class interface(Ui_MainWindow):
 
         # write on the label the queue
     def btnDownload(self):
-
+        booleanStopDownload = False
         self.addToQueue()
 
         self.downloadingThread = downloadingThread()
         self.downloadingThread.start()
 
-        self.downloadingThread.newOperation.connect(self.newOperation)
+        self.downloadingThread.new_operation.connect(self.new_operation)
         self.downloadingThread.taskProgressBar.connect(self.taskProgressBar)
 
         self.btnAddQueue.setEnabled(False)
         self.btnGo.setEnabled(False)
+        self.btnStopDownload.setEnabled(True)
+        with open('lastUsed.txt', 'w') as file:
+            file.write("{}\n{}\n{}\n{}".format(self.leFolder.text(),self.leUrl.text(),self.leStart.text(),self.leEnd.text()))     
 
     def taskProgressBar(self, completed_dowloaded):
         try:
@@ -99,9 +110,22 @@ class interface(Ui_MainWindow):
             self.lblProgressBarResult.setText('0 downloaded out of 0')
         self.progressBar.setValue(completed_dowloaded[0])
 
-    def newOperation(self):
+    def new_operation(self):
         self.btnAddQueue.setEnabled(True)
         self.btnGo.setEnabled(True)
+        self.btnStopDownload.setEnabled(False)
+        self.progressBar.setValue(0)
+        self.lblProgressBarResult.setText('0 downloaded out of 0')
+        downloadQueue.queue.clear()
+        self.tbQueueDownload.setText("")
+        self.downloadingThread.stop()
+        mangaScraper.restart()
+        
+    def stop_download(self):
+        booleanStopDownload = True
+        self.new_operation()
+    def highligthText(self):
+        
 
 
 def main():

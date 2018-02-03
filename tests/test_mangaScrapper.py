@@ -24,7 +24,11 @@ class mangaScrapping_test(unittest.TestCase):
         
         self.assertRaises(ValueError,lambda: find_nth(string,'missing',1))
         self.assertRaises(ValueError,lambda: find_nth(string,'missing',1,direction='b'))
-        
+    def test_init_set_variable_error(self):
+        self.assertRaises(TypeError,lambda:self.mangaScrapper_1.set_variable(2,self.mangaScrapper_1.chStart,
+                                                                             self.mangaScrapper_1.chEnd,self.mangaScrapper_1.folder))
+        self.assertRaises(TypeError,lambda:self.mangaScrapper_1.set_variable('url',1,2)) 
+        self.assertRaises(TypeError,lambda:self.mangaScrapper_1.set_variable(2,'a','b'))
 if __name__ == '__main__':
     unittest.main()
         

@@ -1,4 +1,4 @@
-C:\Users\Utilisateur\Documents\Livre\manga
-http://mangafox.la/manga/kobayashi_san_chi_no_maid_dragon/
+C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\tests
+http://fanfox.net/manga/planetary/
 1
 3
