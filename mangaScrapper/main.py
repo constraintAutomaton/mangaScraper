@@ -6,15 +6,17 @@ from PyQt5.QtMultimedia import QSound
 from interface import Ui_MainWindow
 import threading
 import queue
+from jpgToPdf import PDF
 
-global downloadQueue
-global mangaScraper
-global booleanStopDownload
+global GLOBAL_downloadQueue
+global GLOBAL_mangaScraper
+global GLOBAL_booleanStopDownload
+global GLOBAL_pdfConverter
 
-booleanStopDownload = False
-mangaScraper = mangaFinder()
-downloadQueue = queue.Queue()  # a queue to limit one download at the time
-
+GLOBAL_booleanStopDownload = False
+GLOBAL_mangaScraper = mangaFinder()
+GLOBAL_downloadQueue = queue.Queue()  # a queue to limit one download at the time
+GLOBAL_pdfConverter = PDF()
 
 class downloadingThread(QtCore.QThread):
     new_operation = QtCore.pyqtSignal()
@@ -28,20 +30,20 @@ class downloadingThread(QtCore.QThread):
 
     def run(self):
 
-        while not downloadQueue.empty():  # start to download everything that is in the queue
-            if booleanStopDownload == True:
+        while not GLOBAL_downloadQueue.empty():  # start to download everything that is in the queue
+            if GLOBAL_booleanStopDownload == True:
                 break
-            infoDownload = downloadQueue.get()
-            mangaScraper.set_variable(
+            infoDownload = GLOBAL_downloadQueue.get()
+            GLOBAL_mangaScraper.set_variable(
                 infoDownload[0], infoDownload[1], infoDownload[2], infoDownload[3])
 
-            for pageDownloaded in mangaScraper.mangafoxDownload():
-                if booleanStopDownload == True:
+            for pageDownloaded in GLOBAL_mangaScraper.mangafoxDownload():
+                if GLOBAL_booleanStopDownload == True:
                     break                
                 try:
 
                     self.percentageCompleted = (
-                        pageDownloaded / mangaScraper.totalPage) * 100
+                        pageDownloaded / GLOBAL_mangaScraper.totalPage) * 100
                     self.pageDownloaded = pageDownloaded
                 except:
                     self.percentageCompleted = 0
@@ -51,7 +53,6 @@ class downloadingThread(QtCore.QThread):
         self.new_operation.emit()
     def stop(self):
         self.terminate()    
-
 
 class interface(Ui_MainWindow):
 
@@ -80,14 +81,14 @@ class interface(Ui_MainWindow):
 
             tupleInfoDownload = (self.leUrl.text(), float(self.leStart.text()), float(
                 self.leEnd.text()), self.leFolder.text())  # data to download the chapter
-            downloadQueue.put(tupleInfoDownload)
+            GLOBAL_downloadQueue.put(tupleInfoDownload)
 
-            self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText() + ' {} from chapter {} to chapter {} to {}\n'.format(mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]),
+            self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText() + ' {} from chapter {} to chapter {} to {}\n'.format(GLOBAL_mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]),
                                                                                                                                  tupleInfoDownload[1], tupleInfoDownload[2], tupleInfoDownload[3]))
 
         # write on the label the queue
     def btnDownload(self):
-        booleanStopDownload = False
+        GLOBAL_booleanStopDownload = False
         self.addToQueue()
 
         self.downloadingThread = downloadingThread()
@@ -105,7 +106,7 @@ class interface(Ui_MainWindow):
     def taskProgressBar(self, completed_dowloaded):
         try:
             self.lblProgressBarResult.setText('{} downloaded out of {}'.format(completed_dowloaded[1],
-                                                                               mangaScraper.totalPage))
+                                                                               GLOBAL_mangaScraper.totalPage))
         except:
             self.lblProgressBarResult.setText('0 downloaded out of 0')
         self.progressBar.setValue(completed_dowloaded[0])
@@ -116,16 +117,21 @@ class interface(Ui_MainWindow):
         self.btnStopDownload.setEnabled(False)
         self.progressBar.setValue(0)
         self.lblProgressBarResult.setText('0 downloaded out of 0')
-        downloadQueue.queue.clear()
+        GLOBAL_downloadQueue.queue.clear()
         self.tbQueueDownload.setText("")
         self.downloadingThread.stop()
-        mangaScraper.restart()
+        GLOBAL_mangaScraper.restart()
         
     def stop_download(self):
-        booleanStopDownload = True
+        GLOBAL_booleanStopDownload = True
         self.new_operation()
-    def highligthText(self):
+    def convert_chapter_to_pdf(self):
+        GLOBAL_pdfConverter.Change_image_list()
         
+        #pdf = PDF(['542106.jpg','2.jpg','542106.jpg'])
+        #for i in range(len(pdf.imageList)):
+            #pdf.print_chapter()
+        #pdf.output('tuto.pdf', 'F')        
 
 
 def main():
