@@ -21,7 +21,7 @@ GLOBAL_pdfConverter = PDF()
 class downloadingThread(QtCore.QThread):
     new_operation = QtCore.pyqtSignal()
     taskProgressBar = QtCore.pyqtSignal(tuple)
-
+    convertPdf = QtCore.pyqtSignal(list)
     def __init__(self):
 
         QtCore.QThread.__init__(self)
@@ -36,7 +36,7 @@ class downloadingThread(QtCore.QThread):
             infoDownload = GLOBAL_downloadQueue.get()
             GLOBAL_mangaScraper.set_variable(
                 infoDownload[0], infoDownload[1], infoDownload[2], infoDownload[3])
-
+            boolConvertToPdf = infoDownload[4]
             for pageDownloaded in GLOBAL_mangaScraper.mangafoxDownload():
                 if GLOBAL_booleanStopDownload == True:
                     break                
@@ -50,6 +50,9 @@ class downloadingThread(QtCore.QThread):
 
                 completed_dowloaded = (self.percentageCompleted, self.pageDownloaded)
                 self.taskProgressBar.emit(completed_dowloaded)
+            if boolConvertToPdf == True:
+                self.convertPdf.emit(GLOBAL_mangaScraper.folderActive)
+                
         self.new_operation.emit()
     def stop(self):
         self.terminate()    
@@ -80,9 +83,9 @@ class interface(Ui_MainWindow):
         else:
 
             tupleInfoDownload = (self.leUrl.text(), float(self.leStart.text()), float(
-                self.leEnd.text()), self.leFolder.text())  # data to download the chapter
+                self.leEnd.text()), self.leFolder.text(),self.rbPdf.isChecked())  # data to download the chapter
             GLOBAL_downloadQueue.put(tupleInfoDownload)
-
+           
             self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText() + ' {} from chapter {} to chapter {} to {}\n'.format(GLOBAL_mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]),
                                                                                                                                  tupleInfoDownload[1], tupleInfoDownload[2], tupleInfoDownload[3]))
 
@@ -96,7 +99,7 @@ class interface(Ui_MainWindow):
 
         self.downloadingThread.new_operation.connect(self.new_operation)
         self.downloadingThread.taskProgressBar.connect(self.taskProgressBar)
-
+        self.downloadingThread.convertPdf.connect(self.convert_chapter_to_pdf)
         self.btnAddQueue.setEnabled(False)
         self.btnGo.setEnabled(False)
         self.btnStopDownload.setEnabled(True)
@@ -125,8 +128,9 @@ class interface(Ui_MainWindow):
     def stop_download(self):
         GLOBAL_booleanStopDownload = True
         self.new_operation()
-    def convert_chapter_to_pdf(self):
-        GLOBAL_pdfConverter.Change_image_list()
+    def convert_chapter_to_pdf(self,listImage):
+        print(listImage)
+        GLOBAL_pdfConverter.Change_image_list(listImage)
         
         #pdf = PDF(['542106.jpg','2.jpg','542106.jpg'])
         #for i in range(len(pdf.imageList)):

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1156</width>
-    <height>665</height>
+    <width>1193</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,6 +103,34 @@
         </layout>
        </item>
        <item>
+        <widget class="QPushButton" name="btnChangeFolder">
+         <property name="text">
+          <string>Change folder</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QRadioButton" name="rbPnj">
+           <property name="text">
+            <string>pnj</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rbPdf">
+           <property name="text">
+            <string>pdf</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnStopDownload">
          <property name="text">
           <string>Stop Download</string>
@@ -149,7 +177,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1156</width>
+     <width>1193</width>
      <height>26</height>
     </rect>
    </property>

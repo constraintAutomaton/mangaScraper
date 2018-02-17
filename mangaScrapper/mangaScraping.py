@@ -13,6 +13,7 @@ class mangaFinder():
             self.chEnd = end
             self.domain = self.url[:self.url.find('.')]
             self.folder = folder
+            self.folderActive = []
             self.totalPage = 0
             self.pageDownloaded = 0
             
@@ -57,15 +58,18 @@ class mangaFinder():
 
         self.totalPage = 0
         self.pageDownloaded = 0
+        self.folderActive = []
 
         allChapt = self.mangafoxGetChapter(
         )  # get all the chapters ask by the user
         self.mangafoxGetTotalPage(allChapt)
 
         for urlCh in allChapt:
+            # create the folder of the chapter
             try:
                 folder = self.mangafoxNameFolder(urlCh)
                 os.makedirs(r'{}\{}'.format(self.folder, folder))
+                self.folderActive.append(r'{}\{}'.format(self.folder, folder))
             except:
                 pass
 

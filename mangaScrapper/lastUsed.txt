@@ -1,4 +1,4 @@
 C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\tests
-http://fanfox.net/manga/planetary/
+http://fanfox.net/manga/tales_of_demons_and_gods/
 1
-3
+1
