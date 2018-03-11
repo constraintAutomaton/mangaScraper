@@ -4,7 +4,6 @@ import os
 from mangaScraping import mangaFinder
 from PyQt5.QtMultimedia import QSound
 from interface import Ui_MainWindow
-import threading
 import queue
 from jpgToPdf import PDF
 
@@ -73,6 +72,7 @@ class interface(Ui_MainWindow):
 
         self.btnGo.clicked.connect(self.btnDownload)
         self.btnAddQueue.clicked.connect(self.addToQueue)
+        self.btnChangeFolder.clicked.connect(self.change_folder)
         self.btnStopDownload.clicked.connect(self.stop_download)
         self.btnStopDownload.setEnabled(False)
     def addToQueue(self):
@@ -128,6 +128,9 @@ class interface(Ui_MainWindow):
     def stop_download(self):
         GLOBAL_booleanStopDownload = True
         self.new_operation()
+    def change_folder(self):
+        folder = QtWidgets.QFileDialog.getExistingDirectory(directory=self.leFolder.text())
+        self.leFolder.setText(folder)
     def convert_chapter_to_pdf(self,listImage):
         print(listImage)
         GLOBAL_pdfConverter.Change_image_list(listImage)
