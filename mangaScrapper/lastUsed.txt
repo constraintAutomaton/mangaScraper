@@ -1,4 +1,4 @@
-C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\tests
+C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\tests\test_folder
 http://fanfox.net/manga/tales_of_demons_and_gods/
 1
-1
+2
