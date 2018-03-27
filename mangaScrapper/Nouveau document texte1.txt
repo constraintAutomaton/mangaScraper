@@ -1,5 +1,0 @@
-# Instantiation of inherited class
-pdf = PDF(['542106.jpg','2.jpg','542106.jpg'])
-for i in range(len(pdf.imageList)):
-    pdf.print_chapter()
-pdf.output('tuto.pdf', 'F')

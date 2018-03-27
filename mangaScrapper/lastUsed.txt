@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\tests\test_folder
+=======
+/home/bryan-elliott/Documents/python/mangaScraper/tests/test_folder
+>>>>>>> f16409aa2d7b4ba06ac26ba246e6ad0385a6c8b8
 http://fanfox.net/manga/tales_of_demons_and_gods/
 1
 2
