@@ -7,3 +7,6 @@ La librairie beautiful Soup et pyqt5 sont utilisé.
 L'objectif est de téléchargé des chapitres de manga en format jpg et de, si l'utilisateur le souhaite, 
 de convertir les pages d'un chapitre en un pdf. La possibilité de transférer les fichiers dans une tablette ou un cellulaire
 disponible.
+
+## vidéo démo
+https://youtu.be/W9wOKKn00BE
