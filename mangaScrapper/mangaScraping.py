@@ -108,7 +108,7 @@ class mangaFinder():
                     img_data = request.get(urlImage).content
                     with open('{}.jpg'.format(fileName), 'wb') as handler:
                         handler.write(img_data)
-                    self.manageImage(fileName, folder)
+                    self.manageImage(fileName+'.jpg', folder)
                 else:
                     pass
 
@@ -229,7 +229,7 @@ class mangaFinder():
 
     def manageImage(self, image, folder):
 
-        os.rename(r'{}.jpg'.format(image), os.path.join(self.folder,folder,image))
+        os.rename(r'{}'.format(image), os.path.join(self.folder,folder,image))
 
     def set_variable(self, url, start, end, folder):
         self.__init__(url, start, end, folder)
