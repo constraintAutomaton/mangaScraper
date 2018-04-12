@@ -12,7 +12,7 @@ for file in listFile:
     if '.jpg' in file:
         listImage.append(file)     
 listImage = sorted(listImage, key=lambda x: (int(re.sub('\D','',x)),x))
-print(listImage)
+#print(listImage)
 os.chdir(os.path.join(r'vagabond v01 c001'))
 testPdf = PDF('vagabon',imageList=listImage)
 
