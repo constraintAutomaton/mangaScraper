@@ -5,6 +5,8 @@ from unittest.mock import patch
 sys.path.append(r'C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\mangaScrapper')
 from mangaScraping import mangaFinder
 from mangaScraping import find_nth
+
+
 class mangaScrapping_test(unittest.TestCase):
     
     def setUp(self):

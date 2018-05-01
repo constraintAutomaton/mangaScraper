@@ -1,4 +1,4 @@
-C:\Users\Utilisateur\Documents\Python_Scripts\webScraping\manga\tests
-http://fanfox.net/manga/planetary/
-1
+C:/Users/Utilisateur/Documents/Python_Scripts/webScraping/manga/tests/test_folder
+http://fanfox.net/manga/vagabond/
 3
+4
