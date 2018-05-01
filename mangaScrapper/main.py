@@ -15,7 +15,7 @@ global GLOBAL_pdfConverter
 GLOBAL_booleanStopDownload = False
 GLOBAL_mangaScraper = mangaFinder()
 GLOBAL_downloadQueue = queue.Queue()  # a queue to limit one download at the time
-GLOBAL_pdfConverter = PDF()
+#GLOBAL_pdfConverter = PDF()
 
 class downloadingThread(QtCore.QThread):
     new_operation = QtCore.pyqtSignal()
