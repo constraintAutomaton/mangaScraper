@@ -124,10 +124,7 @@ class interface(Ui_MainWindow):
     def stop_download(self):
         booleanStopDownload = True
         self.new_operation()
-    def highligthText(self):
-        
-
-
+   
 def main():
     app = QtWidgets.QApplication(sys.argv)
     w = QtWidgets.QMainWindow()
