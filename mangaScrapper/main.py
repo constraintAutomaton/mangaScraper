@@ -128,6 +128,7 @@ class interface(Ui_MainWindow):
     def stop_download(self):
         GLOBAL_booleanStopDownload = True
         self.new_operation()
+
     def change_folder(self):
         folder = QtWidgets.QFileDialog.getExistingDirectory(directory=self.leFolder.text())
         self.leFolder.setText(folder)
@@ -139,7 +140,6 @@ class interface(Ui_MainWindow):
         #for i in range(len(pdf.imageList)):
             #pdf.print_chapter()
         #pdf.output('tuto.pdf', 'F')        
-
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
