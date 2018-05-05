@@ -31,10 +31,12 @@ class PDF(FPDF):
         self.chapter_body()
     def Change_image_list(self,imageList):
         self.imageList = imageList
+    def change_pdf_name(self,name):
+        self.chapterName = name+".pdf"
     def image_management(self,image):
         '''resize image depending of the size of the image'''
-        img = cv2.imread(image,0)
-        height, width = img.shape
+        img = cv2.imread(image)
+        height, width, channel = img.shape
         if height>width:
             resizeIamge = cv2.resize(img,(self.sizePdfPortraitX,self.sizePdfPortraitY))
             size = self.sizePdfPortraitX

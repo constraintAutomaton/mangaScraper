@@ -15,7 +15,7 @@ global GLOBAL_pdfConverter
 GLOBAL_booleanStopDownload = False
 GLOBAL_mangaScraper = mangaFinder()
 GLOBAL_downloadQueue = queue.Queue()  # a queue to limit one download at the time
-#GLOBAL_pdfConverter = PDF()
+GLOBAL_pdfConverter = PDF()
 
 class downloadingThread(QtCore.QThread):
     new_operation = QtCore.pyqtSignal()
@@ -49,8 +49,8 @@ class downloadingThread(QtCore.QThread):
 
                 completed_dowloaded = (self.percentageCompleted, self.pageDownloaded)
                 self.taskProgressBar.emit(completed_dowloaded)
-            if boolConvertToPdf == True:
-                self.convertPdf.emit(GLOBAL_mangaScraper.folderActive)
+                if boolConvertToPdf == True:
+                    self.convertPdf.emit(self.chapterName)
                 
         self.new_operation.emit()
     def stop(self):
@@ -132,14 +132,12 @@ class interface(Ui_MainWindow):
     def change_folder(self):
         folder = QtWidgets.QFileDialog.getExistingDirectory(directory=self.leFolder.text())
         self.leFolder.setText(folder)
-    def convert_chapter_to_pdf(self,listImage):
-        print(listImage)
+    def convert_chapter_to_pdf(self,listImage_name):
+        listImage = listImage_name[0]
+        name = listImage_name[1]
+        GLOBAL_pdfConverter.change_pdf_name(name)
         GLOBAL_pdfConverter.Change_image_list(listImage)
-        
-        #pdf = PDF(['542106.jpg','2.jpg','542106.jpg'])
-        #for i in range(len(pdf.imageList)):
-            #pdf.print_chapter()
-        #pdf.output('tuto.pdf', 'F')        
+        GLOBAL_pdfConverter.run()    
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
