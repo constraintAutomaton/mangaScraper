@@ -20,12 +20,13 @@ GLOBAL_pdfConverter = PDF()
 class downloadingThread(QtCore.QThread):
     new_operation = QtCore.pyqtSignal()
     taskProgressBar = QtCore.pyqtSignal(tuple)
-    convertPdf = QtCore.pyqtSignal(list)
+    convertPdf = QtCore.pyqtSignal(dict)
     def __init__(self):
 
         QtCore.QThread.__init__(self)
         self.percentageCompleted = 0
         self.pageDownloaded = 0
+        self.dictPannel_chapter_instance = {}
 
     def run(self):
 
@@ -49,8 +50,13 @@ class downloadingThread(QtCore.QThread):
 
                 completed_dowloaded = (self.percentageCompleted, self.pageDownloaded)
                 self.taskProgressBar.emit(completed_dowloaded)
-                if boolConvertToPdf == True:
-                    self.convertPdf.emit(self.chapterName)
+                    # append the list of pannel in the chapter
+                try:
+                    self.dictPannel_chapter_instance[GLOBAL_mangaScraper.chapterName] = self.dictPannel_chapter_instance[GLOBAL_mangaScraper.chapterName]+[GLOBAL_mangaScraper.pannelPath]
+                except:
+                    self.dictPannel_chapter_instance[GLOBAL_mangaScraper.chapterName] = [GLOBAL_mangaScraper.pannelPath]
+            if boolConvertToPdf == True:
+                self.convertPdf.emit(self.dictPannel_chapter_instance)
                 
         self.new_operation.emit()
     def stop(self):
@@ -83,7 +89,7 @@ class interface(Ui_MainWindow):
         else:
 
             tupleInfoDownload = (self.leUrl.text(), float(self.leStart.text()), float(
-                self.leEnd.text()), self.leFolder.text(),self.rbPdf.isChecked())  # data to download the chapter
+                self.leEnd.text()), os.path.abspath(self.leFolder.text()),self.rbPdf.isChecked())  # data to download the chapter
             GLOBAL_downloadQueue.put(tupleInfoDownload)
            
             self.tbQueueDownload.setText(self.tbQueueDownload.toPlainText() + ' {} from chapter {} to chapter {} to {}\n'.format(GLOBAL_mangaScraper.mangafoxGetTitle(tupleInfoDownload[0]),
@@ -132,12 +138,12 @@ class interface(Ui_MainWindow):
     def change_folder(self):
         folder = QtWidgets.QFileDialog.getExistingDirectory(directory=self.leFolder.text())
         self.leFolder.setText(folder)
-    def convert_chapter_to_pdf(self,listImage_name):
-        listImage = listImage_name[0]
-        name = listImage_name[1]
-        GLOBAL_pdfConverter.change_pdf_name(name)
-        GLOBAL_pdfConverter.Change_image_list(listImage)
-        GLOBAL_pdfConverter.run()    
+    def convert_chapter_to_pdf(self,dictInfo):
+        for name, listImage in dictInfo.items():
+            GLOBAL_pdfConverter.change_pdf_name(name)
+            GLOBAL_pdfConverter.Change_image_list(listImage)
+            GLOBAL_pdfConverter.run()
+            GLOBAL_pdfConverter.restart()
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

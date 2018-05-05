@@ -68,6 +68,7 @@ class mangaFinder():
             # create the folder of the chapter
             try:
                 folder = self.mangafoxNameFolder(urlCh)
+                self.chapterName = str(folder) # get the name of the chapter for the pdf convertion
                 os.makedirs(os.path.join(self.folder,folder))
                 self.folderActive.append(os.path.join(self.folder,folder))
             except:
@@ -103,13 +104,13 @@ class mangaFinder():
                 urlImage = urlImage[5:end]
                 urlImage = urlImage.replace('amp;', '')
                 # get the link of the image by delete the 'junk text' of the tag
-
-                if not (os.path.isfile(os.path.join(self.folder,folder,fileName))):
+                if not (os.path.isfile(os.path.join(self.folder,folder,fileName+'.jpg'))):
                     img_data = request.get(urlImage).content
                     with open('{}.jpg'.format(fileName), 'wb') as handler:
                         handler.write(img_data)
                     self.manageImage(fileName+'.jpg', folder)
                 else:
+                    self.pannelPath =os.path.join(self.folder,folder,fileName+'.jpg')
                     pass
 
                 self.pageDownloaded += 1
@@ -209,10 +210,10 @@ class mangaFinder():
 
         for caracter in loopName:
 
-            if caracter == '_' or caracter == '/':
+            if caracter == '/':
 
-                name = name.replace(caracter, ' ')
-        name = name.replace(' 1.html', '')
+                name = name.replace(caracter, '_')
+        name = name.replace('_1.html', '')
         return name
 
     def mangafoxGetTotalPage(self, allChapter):
@@ -228,8 +229,10 @@ class mangaFinder():
         return Title
 
     def manageImage(self, image, folder):
-
+        
         os.rename(r'{}'.format(image), os.path.join(self.folder,folder,image))
+       
+        self.pannelPath = os.path.join(self.folder,folder,image) # for the pdf convertion
 
     def set_variable(self, url, start, end, folder):
         self.__init__(url, start, end, folder)
