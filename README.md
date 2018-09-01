@@ -1,5 +1,5 @@
 # mangaScraper
-
+Dosn't work anymore whit many manga because manga fox block licenses manga from being view
 A web scraper to download manga whit a graphic user interface . 
 
 ## Objectif
