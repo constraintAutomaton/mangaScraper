@@ -1,4 +1,5 @@
 # mangaScraper
+Ne marche plus avec beaucoup de manga, car manga fox bloque le visionnement de manga qui on une license.
 
 Un web scraper qui permet de télécharger des chapitres de manga à l'aide d'un interface graphique. 
 La librairie beautiful Soup et pyqt5 sont utilisé.
